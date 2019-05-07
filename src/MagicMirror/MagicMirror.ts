@@ -1,4 +1,5 @@
 import {CronJob} from "cron";
+import * as $ from "jquery";
 import {PythonShell} from "python-shell";
 import {NewsWidget} from "./NewsWidget";
 import {WeatherWidget} from "./WeatherWidget";
@@ -9,6 +10,23 @@ import {WeatherWidget} from "./WeatherWidget";
  * @class MagicMirror
  */
 class MagicMirror {
+    /**
+     * Returns the mirrors unique key
+     * @param idElement - the element to display the key on
+     */
+    public getMirrorId(idElement: HTMLElement) {
+        let key = "Error getting key, please restart";
+        $.ajax({
+            async: false,
+            success: (data) => {
+                key = data;
+            },
+            type: "get",
+            url: "http://127.0.0.1:5000/mirrorkey",
+        });
+        idElement.innerText =  key;
+    }
+
     /**
      * Connects to the Python server
      */
@@ -54,6 +72,10 @@ class MagicMirror {
         this.updateWeather(weatherWidget, weatherWidgetElement);
     }
 
+    /**
+     * Pulls the newsapi into the news widget
+     * @param newsWidgetElement
+     */
     public getNews(newsWidgetElement: HTMLElement) {
         const newsapi = new NewsWidget();
         this.displayNewsData(newsapi.getNews(), newsWidgetElement);
@@ -114,7 +136,8 @@ class MagicMirror {
      */
     private displayNewsData(data: any, widget: HTMLElement) {
         global.console.log(data);
-        for (let i = 0; i < data.articles.length; i++) {
+        // data.articles.length
+        for (let i = 0; i < 3; i++) {
             widget.innerHTML += "<hr><h4>" + data.articles[i].title + "</h4>";
             widget.innerHTML += "<p>" + data.articles[i].description + "</p>";
             widget.innerHTML += "<p>" + data.articles[i].author + "</p>";

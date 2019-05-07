@@ -7,12 +7,14 @@ import {MagicMirror} from "./MagicMirror/MagicMirror";
 const clockWidget: HTMLElement = document.getElementById("clockWidget");
 const weatherWidget: HTMLElement = document.getElementById("weatherWidget");
 const newsWidget: HTMLElement = document.getElementById("newsWidget");
+const mirrorId: HTMLElement = document.getElementById("mirrorId");
 
 const magicMirror = new MagicMirror();
 magicMirror.connectToPythonServer();
 // Small loading time
 // TODO add loading icon
 setTimeout(() => {
+    magicMirror.getMirrorId(mirrorId);
     magicMirror.getWeather(weatherWidget);
     magicMirror.displayClock(clockWidget);
     magicMirror.getNews(newsWidget);
