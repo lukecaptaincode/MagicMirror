@@ -1,4 +1,4 @@
-import * as $ from "JQuery";
+import * as $ from "jquery";
 
 /**
  * Controls the logic for the weather widget
@@ -36,7 +36,7 @@ class WeatherWidget {
         let weather = "errWeather"; // just in case of opps
         $.ajax({
             async: false,
-            success: (data) => {
+            success: (data: any) => {
                 global.console.log(data);
                 weather = data;
                 WeatherWidget.storePulledData(data);
@@ -62,18 +62,17 @@ class WeatherWidget {
 
     /**
      * Gets api from python server
-     * TODO write xhr into wrapper
      */
     private getWeatherApiKey(): string {
         let key = "errKey"; // just in case of opps
         $.ajax({
             async: false,
-            success: (data) => {
+            success: (data: any) => {
                 global.console.log(data);
                 key = data;
             },
             type: "get",
-            url: "http://127.0.0.1:5000/weatherapikey",
+            url: "http://0.0.0.0:5000/weatherapikey",
         });
         return key;
     }

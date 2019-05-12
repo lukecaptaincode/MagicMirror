@@ -1,24 +1,48 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <meta charset="UTF-8">
     <title>Hello World!</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto|Stylish" rel="stylesheet">
+    <link rel="stylesheet" href="simple-grid.min.css">
     <link rel="stylesheet" href="main.css">
-  </head>
-  <body>
-    <h1 id="clockWidget">Hello World!</h1>
-    <!--<a href="http://127.0.0.1:5000/hi">Flask Check</a>-->
-    <div id="weatherWidget">
+</head>
+<body>
+<div id="loadingScreen">
+    <div id="square-loader"></div>
+    <div id="logo"><img src="logo.svg"/></div>
+    <br>
+    <h1 class="title">MagicMirror</h1>
+</div>
+<div class="row">
+    <div class="col-2">
+        <div class="col-6"><h1 id="clockWidget"></h1>
+            <div id="weatherWidget">
+
+            </div>
+        </div>
+        <div class="col-6">
+            <div id="newsWidget">
+
+            </div>
+        </div>
+    </div>
+    <div id="notesWidget">
 
     </div>
-    <div id="newsWidget">
-
+    <div class="row" id="id-container">
+        <div class="col-12" id="quotes-container">
+            <h1 id="quote"></h1>
+        </div>
+        <div class="col-12">
+            <h1 id="mirrorId"></h1>
+        </div>
     </div>
-    <h1 id="mirrorId"></h1>
-  </body>
+</div>
+</body>
 
-  <script>
+<script>
     // You can also require other files to run in this process
     require('./dist/renderer.js')
-  </script>
+</script>
 </html>

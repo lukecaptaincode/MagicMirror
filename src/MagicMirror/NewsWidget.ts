@@ -29,7 +29,7 @@ class NewsWidget {
                 key = data;
             },
             type: "get",
-            url: "http://127.0.0.1:5000/newsapikey",
+            url: "http://0.0.0.0:5000/newsapikey",
         });
         return key;
     }

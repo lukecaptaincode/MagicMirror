@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 import socket
 import sys
 from ConfigAccessManager import ConfigAccessManager
@@ -48,15 +48,24 @@ def mirror_key():
         return str(keyReturn)
 
 
+@app.route("/notes")
+def get_notes():
+    try:
+        ref = '/' + mirror_key() + '/notes/'
+        data = firebase.firebase_get(ref)
+        return jsonify(data)
+    except:
+        return "No notes"
+
 '''
 Starts the server
 '''
 if __name__ == "__main__":
     print("Server boot started")  # Tell the user
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # Set the socket
-    result = sock.connect_ex(('127.0.0.1', 5000))  # Poll local host port 5000
+    result = sock.connect_ex(('0.0.0.0', 5000))  # Poll local host port 5000
     if result == 0:
         print("Is up")  # If already up, tell user
     else:
-        app.run(host='127.0.0.1', port=5000)  # If not start on local host 5000
+        app.run(host='0.0.0.0', port=5000)  # If not start on local host 5000
         print("Has been started")

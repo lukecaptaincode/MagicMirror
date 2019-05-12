@@ -6,19 +6,23 @@ let mainWindow: Electron.BrowserWindow;
 function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
-        height: 600,
+        // Max size, no frame and not resizable;
+        frame: false,
+        fullscreen: true,
+        height: 1280,
+        resizable: false,
         webPreferences: {
             // This preference allows for OS level multithreading - Luke Captain
             nodeIntegrationInWorker: true,
         },
-        width: 800,
+        width: 720,
     });
-
+    mainWindow.maximize();
     // and load the index.html of the app.
     mainWindow.loadFile(path.join(__dirname, "../index.html"));
 
     // Open the DevTools.
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
 
     // Emitted when the window is closed.
     mainWindow.on("closed", () => {

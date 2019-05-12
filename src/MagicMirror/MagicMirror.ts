@@ -2,7 +2,10 @@ import {CronJob} from "cron";
 import * as $ from "jquery";
 import {PythonShell} from "python-shell";
 import {NewsWidget} from "./NewsWidget";
+import {NotesWidget} from "./NotesWidget";
+import {QuotesWidget} from "./QuotesWidget";
 import {WeatherWidget} from "./WeatherWidget";
+
 
 /**
  * contains all the main function for the magic mirror
@@ -10,6 +13,61 @@ import {WeatherWidget} from "./WeatherWidget";
  * @class MagicMirror
  */
 class MagicMirror {
+    /**
+     * Loads a random quote into the passed quote element
+     * @param quotesElement
+     */
+    public getQuotes(quotesElement: HTMLElement) {
+        const quotesWidget = new QuotesWidget();
+        quotesElement.innerText = quotesWidget.getQuote();
+    }
+
+    /**
+     * Gets the notes from the notes widget
+     * @param notesElement - the element to populate the notes to
+     */
+    public getNotes(notesElement: HTMLElement) {
+        // Declare Object keys , not literal string access
+        const contentKey: any = "content";
+        const titleKey: any = "title";
+        const screenNameKey: any = "screenName";
+        // Init notes widget and get the notes to an array
+        const noteWidget = new NotesWidget();
+        notesElement.innerHTML = "";
+        // Every 10 seconds pull from the server and poplaute the notes widget
+        setInterval(() => {
+            // Set the title
+            notesElement.innerHTML = "<h1>Notes</h1>";
+            // Get the notes
+            const notesArray = noteWidget.getNotes() as any;
+            // Init the htmpstring
+            let htmlString = "";
+            htmlString += "<h1> Notes: </h1>";
+            /** If the number of returned notes is less that 6 use the length
+             * of the returned notes to populate the widget, else use limit it to 6
+             */
+            let numberOfNotes = 0;
+            if (notesArray.length < 6) {
+                numberOfNotes = notesArray.length;
+            } else {
+                numberOfNotes = 6;
+            }
+            /**
+             * Create the notes
+             */
+            for (let i = 0; i < numberOfNotes; i++) {
+                htmlString += "<div class='note-container'>";
+                htmlString += "<h5>Note From:" + notesArray[i][screenNameKey] + "</h5>";
+                htmlString += "<h1>" + notesArray[i][titleKey] + "</h1>";
+                htmlString += "<h2>" + notesArray[i][contentKey] + "</h2><hr>";
+                htmlString += "</div>";
+            }
+            // Populate the container
+            notesElement.innerHTML = htmlString;
+        }, 10000);
+
+    }
+
     /**
      * Returns the mirrors unique key
      * @param idElement - the element to display the key on
@@ -22,9 +80,9 @@ class MagicMirror {
                 key = data;
             },
             type: "get",
-            url: "http://127.0.0.1:5000/mirrorkey",
+            url: "http://0.0.0.0:5000/mirrorkey",
         });
-        idElement.innerText =  key;
+        idElement.innerText = "Mirror id: " + key;
     }
 
     /**
@@ -92,8 +150,10 @@ class MagicMirror {
     private updateWeather(weatherWidget: WeatherWidget, widget: HTMLElement) {
         global.console.log("Starting weather cron job");
         const now = new Date();
+        // Create the cron job for every 10 mins
         const job = new CronJob("0 */10 * * * *", () => {
             const isStale = WeatherWidget.isLastWeatherPullStale();
+            // If the pull is stale use accuweather, else use the stored weather data
             if (isStale) {
                 // Get from Accuweather
                 global.console.log("Pulling from Accuweather");
@@ -111,7 +171,7 @@ class MagicMirror {
                 global.console.log("Pulling weather info from storage");
             }
         });
-        job.start();
+        job.start(); // start cron job
     }
 
     /**
@@ -135,10 +195,9 @@ class MagicMirror {
      * @param widget
      */
     private displayNewsData(data: any, widget: HTMLElement) {
-        global.console.log(data);
         // data.articles.length
         for (let i = 0; i < 3; i++) {
-            widget.innerHTML += "<hr><h4>" + data.articles[i].title + "</h4>";
+            widget.innerHTML += "<h4>" + data.articles[i].title + "</h4>";
             widget.innerHTML += "<p>" + data.articles[i].description + "</p>";
             widget.innerHTML += "<p>" + data.articles[i].author + "</p>";
         }
